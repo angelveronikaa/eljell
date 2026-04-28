@@ -1,0 +1,540 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ELJEL Apparel - Fashion Store</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- LOADING OVERLAY -->
+    <div class="loading-overlay" id="loadingOverlay">
+      <img
+        src="logo.png"
+        alt="ELJEL"
+        class="loading-logo-img"
+        onerror="
+          this.style.display = 'none';
+          document.getElementById('loadingLogoFallback').style.display = 'block';
+        "
+      />
+      <div class="loading-logo" id="loadingLogoFallback" style="display: none">EL<span>J</span>EL</div>
+      <div class="loading-bar"><div class="loading-bar-inner"></div></div>
+    </div>
+
+    <!-- TOAST -->
+    <div class="toast" id="toast"></div>
+
+    <!-- PROCESSING MODAL -->
+    <div class="processing-modal" id="processingModal">
+      <div class="processing-card">
+        <div class="processing-spinner"></div>
+        <div class="processing-title" id="processingTitle">Memproses Pembayaran</div>
+        <div class="processing-sub" id="processingSub">Mohon tunggu sebentar...</div>
+      </div>
+    </div>
+
+    <!-- PRODUCT MODAL (Admin) -->
+    <div class="modal-bg" id="productModal">
+      <div class="modal">
+        <div class="modal-header">
+          <div class="modal-title" id="modalTitle">Tambah Produk</div>
+          <button class="modal-close" onclick="closeModal()">✕</button>
+        </div>
+        <div class="modal-form">
+          <div class="form-group"><label class="form-label">Nama Produk</label><input class="form-input" id="mName" placeholder="Nama produk" /></div>
+          <div class="form-group">
+            <label class="form-label">Kategori</label>
+            <select class="form-select form-input" id="mCat">
+              <option>Baju</option>
+              <option>Celana</option>
+              <option>Dress</option>
+              <option>New Arrivals</option>
+            </select>
+          </div>
+          <div class="form-group"><label class="form-label">Harga (Rp)</label><input class="form-input" id="mPrice" type="number" placeholder="150000" /></div>
+          <div class="form-group"><label class="form-label">Stok</label><input class="form-input" id="mStock" type="number" placeholder="50" /></div>
+          <div class="form-group">
+            <label class="form-label">Foto Produk</label>
+            <div class="img-upload-area" id="mImgUpload" onclick="document.getElementById('mImgFile').click()">
+              <img id="mImgPreview" src="" alt="" style="display: none; width: 100%; height: 100%; object-fit: cover; border-radius: 6px" />
+              <div id="mImgPlaceholder" style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%">
+                <div style="font-size: 2rem; margin-bottom: 0.5rem">📷</div>
+                <div style="font-size: 0.8rem; color: var(--taupe)">Klik untuk upload foto</div>
+              </div>
+            </div>
+            <input type="file" id="mImgFile" accept="image/*" style="display: none" onchange="previewModalImg(this)" />
+          </div>
+          <div class="form-group"><label class="form-label">Deskripsi</label><textarea class="form-input" id="mDesc" rows="3" placeholder="Deskripsi produk..."></textarea></div>
+          <button class="btn-save" onclick="saveProduct()">Simpan Produk</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- NAVBAR -->
+    <nav>
+      <div class="nav-inner">
+        <div class="logo" onclick="showPage('home')">
+          <img
+            src="logo.png"
+            alt="ELJEL Apparel"
+            class="logo-img"
+            onerror="
+              this.style.display = 'none';
+              document.getElementById('logoFallback').style.display = 'block';
+            "
+          />
+          <span id="logoFallback" style="display: none">EL<span style="color: var(--rose)">J</span>EL</span>
+        </div>
+        <ul class="nav-links">
+          <li><a onclick="showPage('home')" id="nav-home" class="active">Home</a></li>
+          <li><a onclick="showPage('products')" id="nav-products">Produk</a></li>
+          <li><a onclick="showPage('admin')" id="nav-admin">Admin</a></li>
+        </ul>
+        <div class="nav-actions">
+          <button class="cart-btn" onclick="showPage('cart')">🛍️ <span class="cart-badge" id="cartBadge">0</span></button>
+          <button class="nav-user" id="navUserBtn" onclick="toggleAuth()">Masuk</button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- ==================== HOME PAGE ==================== -->
+    <div class="page active" id="page-home">
+      <div class="hero">
+        <div class="hero-content">
+          <div class="hero-text">
+            <div class="tagline">✦ New Collection 2025</div>
+            <h1>Ekspresikan <em>Gaya</em><br />Terbaikmu</h1>
+            <p>Koleksi fashion terkurasi untuk wanita modern yang stylish, percaya diri, dan penuh karakter.</p>
+            <div class="hero-btns">
+              <button class="btn-primary" onclick="showPage('products')">Belanja Sekarang</button>
+              <button class="btn-outline" onclick="scrollToFeatured()">Lihat Koleksi</button>
+            </div>
+          </div>
+          <div class="hero-visual">
+            <div class="hero-card">
+              <div class="hero-card-icon">👗</div>
+              <h3>Premium Quality</h3>
+              <p>Bahan pilihan terbaik</p>
+            </div>
+            <div class="hero-card" style="margin-top: 1.5rem">
+              <div class="hero-card-icon">🚚</div>
+              <h3>Free Ongkir</h3>
+              <p>Min. pembelian 150rb</p>
+            </div>
+            <div class="hero-card">
+              <div class="hero-card-icon">✨</div>
+              <h3>New Arrivals</h3>
+              <p>Update tiap minggu</p>
+            </div>
+            <div class="hero-card" style="margin-top: 1.5rem">
+              <div class="hero-card-icon">🔄</div>
+              <h3>Easy Return</h3>
+              <p>7 hari garansi</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- KATEGORI SECTION -->
+      <div class="section" style="padding: 3rem 2rem">
+        <div class="section-inner">
+          <div class="section-header">
+            <div>
+              <div class="section-title">Kategori</div>
+              <div class="section-subtitle">Temukan style favoritmu</div>
+            </div>
+          </div>
+          <div class="category-grid">
+            <div class="category-card" onclick="goToCategory('Baju')">
+              <div class="category-icon">👕</div>
+              <div class="category-name">Baju</div>
+            </div>
+            <div class="category-card" onclick="goToCategory('Celana')">
+              <div class="category-icon">👖</div>
+              <div class="category-name">Celana</div>
+            </div>
+            <div class="category-card" onclick="goToCategory('Dress')">
+              <div class="category-icon">👗</div>
+              <div class="category-name">Dress</div>
+            </div>
+            <div class="category-card highlight" onclick="goToCategory('New Arrivals')">
+              <div class="category-icon">🆕</div>
+              <div class="category-name">New Arrivals</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section" id="featured-section">
+        <div class="section-inner">
+          <div class="section-header">
+            <div>
+              <div class="section-title">Produk Unggulan</div>
+              <div class="section-subtitle">Pilihan terfavorit minggu ini</div>
+            </div>
+            <a class="view-all" onclick="showPage('products')">Lihat Semua →</a>
+          </div>
+          <div class="product-grid" id="featuredGrid"></div>
+        </div>
+      </div>
+
+      <div class="section" style="background: linear-gradient(135deg, #fde8e4 0%, #ede8f5 60%, #e2f0eb 100%); padding: 4rem 2rem">
+        <div class="section-inner" style="text-align: center">
+          <div style="font-family: var(--font-display); font-size: 0.9rem; color: var(--rose); margin-bottom: 1rem; letter-spacing: 0.15em">KENAPA ELJEL?</div>
+          <h2 style="font-family: var(--font-display); font-size: 2rem; color: var(--charcoal); margin-bottom: 3rem; font-weight: 400">Belanja Fashion, Lebih Menyenangkan</h2>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem">
+            <div style="background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(12px); border-radius: 20px; padding: 2rem 1.5rem; box-shadow: 0 4px 20px rgba(180, 120, 120, 0.08)">
+              <div style="font-size: 2.5rem; margin-bottom: 0.75rem">💳</div>
+              <h3 style="font-family: var(--font-display); margin-bottom: 0.5rem; color: var(--charcoal); font-weight: 600">Pembayaran Aman</h3>
+              <p style="color: #9c8a8c; font-size: 0.875rem">Transfer Bank, E-Wallet, QRIS, Alfamart & Indomaret</p>
+            </div>
+            <div style="background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(12px); border-radius: 20px; padding: 2rem 1.5rem; box-shadow: 0 4px 20px rgba(180, 120, 120, 0.08)">
+              <div style="font-size: 2.5rem; margin-bottom: 0.75rem">📦</div>
+              <h3 style="font-family: var(--font-display); margin-bottom: 0.5rem; color: var(--charcoal); font-weight: 600">Pengiriman Cepat</h3>
+              <p style="color: #9c8a8c; font-size: 0.875rem">Estimasi 1–3 hari kerja ke seluruh Indonesia</p>
+            </div>
+            <div style="background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(12px); border-radius: 20px; padding: 2rem 1.5rem; box-shadow: 0 4px 20px rgba(180, 120, 120, 0.08)">
+              <div style="font-size: 2.5rem; margin-bottom: 0.75rem">🎁</div>
+              <h3 style="font-family: var(--font-display); margin-bottom: 0.5rem; color: var(--charcoal); font-weight: 600">Promo Eksklusif</h3>
+              <p style="color: #9c8a8c; font-size: 0.875rem">Member dapat akses promo dan diskon spesial</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== PRODUCTS PAGE ==================== -->
+    <div class="page" id="page-products">
+      <div class="section">
+        <div class="section-inner">
+          <div class="section-header">
+            <div>
+              <div class="section-title" id="productsPageTitle">Semua Produk</div>
+              <div class="section-subtitle" id="productCount"></div>
+            </div>
+          </div>
+          <div class="filter-bar">
+            <input class="search-input" placeholder="🔍 Cari produk..." id="searchInput" oninput="filterProducts()" />
+            <button class="filter-chip active" onclick="filterByCategory('all', this)">Semua</button>
+            <button class="filter-chip" onclick="filterByCategory('Baju', this)">Baju</button>
+            <button class="filter-chip" onclick="filterByCategory('Celana', this)">Celana</button>
+            <button class="filter-chip" onclick="filterByCategory('Dress', this)">Dress</button>
+            <button class="filter-chip" onclick="filterByCategory('New Arrivals', this)">New Arrivals</button>
+          </div>
+          <div class="product-grid" id="productsGrid"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== PRODUCT DETAIL PAGE ==================== -->
+    <div class="page" id="page-detail">
+      <div class="product-detail">
+        <div class="detail-grid" id="detailContent"></div>
+      </div>
+    </div>
+
+    <!-- ==================== CART PAGE ==================== -->
+    <div class="page" id="page-cart">
+      <div class="cart-page">
+        <div class="cart-title">Keranjang Belanja 🛍️</div>
+        <div id="cartContent"></div>
+      </div>
+    </div>
+
+    <!-- ==================== CHECKOUT PAGE ==================== -->
+    <div class="page" id="page-checkout">
+      <div class="checkout-page">
+        <div class="checkout-title">Checkout</div>
+        <div class="checkout-layout">
+          <div>
+            <!-- Shipping Info -->
+            <div class="form-section">
+              <div class="form-section-title">Informasi Pengiriman</div>
+              <div class="form-grid">
+                <div class="form-group"><label class="form-label">Nama Lengkap</label><input class="form-input" id="shpName" placeholder="Nama penerima" /></div>
+                <div class="form-group"><label class="form-label">No. Telepon</label><input class="form-input" id="shpPhone" placeholder="08xx-xxxx-xxxx" /></div>
+                <div class="form-group full"><label class="form-label">Alamat Lengkap</label><textarea class="form-input" id="shpAddress" rows="2" placeholder="Jl. ..."></textarea></div>
+                <div class="form-group"><label class="form-label">Kota</label><input class="form-input" id="shpCity" placeholder="Kota" /></div>
+                <div class="form-group"><label class="form-label">Kode Pos</label><input class="form-input" id="shpZip" placeholder="65000" /></div>
+                <div class="form-group full">
+                  <label class="form-label">Kurir</label>
+                  <select class="form-select form-input" id="shpCourier" onchange="renderCheckout()">
+                    <option value="12000">JNE Reguler - Rp 12.000 (3-5 hari)</option>
+                    <option value="18000">JNE YES - Rp 18.000 (1-2 hari)</option>
+                    <option value="9000">J&T Economy - Rp 9.000 (3-5 hari)</option>
+                    <option value="0">SiCepat HALU - Gratis (s.d. 3 hari)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Payment Method -->
+            <div class="form-section">
+              <div class="form-section-title">Metode Pembayaran</div>
+              <div class="payment-options" id="paymentOptions">
+                <!-- Transfer Bank -->
+                <div class="payment-option" id="pay-bank" onclick="selectPayment('bank')">
+                  <div class="payment-option-header">
+                    <div class="payment-radio"></div>
+                    <div class="payment-icon">🏦</div>
+                    <div>
+                      <div class="payment-name">Transfer Bank</div>
+                      <div class="payment-desc">BCA, Mandiri, BRI</div>
+                    </div>
+                  </div>
+                  <div class="payment-body" id="body-bank">
+                    <div style="font-size: 0.8rem; color: var(--taupe); margin-bottom: 0.75rem">Pilih bank tujuan:</div>
+                    <div class="bank-options">
+                      <button class="bank-btn" onclick="selectBank('BCA', event)">🏦 BCA</button>
+                      <button class="bank-btn" onclick="selectBank('Mandiri', event)">🏦 Mandiri</button>
+                      <button class="bank-btn" onclick="selectBank('BRI', event)">🏦 BRI</button>
+                    </div>
+                    <div class="bank-form" id="bankFormContainer"></div>
+                  </div>
+                </div>
+
+                <!-- E-Wallet -->
+                <div class="payment-option" id="pay-ewallet" onclick="selectPayment('ewallet')">
+                  <div class="payment-option-header">
+                    <div class="payment-radio"></div>
+                    <div class="payment-icon">📱</div>
+                    <div>
+                      <div class="payment-name">E-Wallet</div>
+                      <div class="payment-desc">GoPay, OVO, DANA, ShopeePay</div>
+                    </div>
+                  </div>
+                  <div class="payment-body" id="body-ewallet">
+                    <div style="font-size: 0.8rem; color: var(--taupe); margin-bottom: 0.75rem">Pilih e-wallet:</div>
+                    <div class="ewallet-options">
+                      <button class="ewallet-btn" onclick="selectEwallet('GoPay', event)">GoPay</button>
+                      <button class="ewallet-btn" onclick="selectEwallet('OVO', event)">OVO</button>
+                      <button class="ewallet-btn" onclick="selectEwallet('DANA', event)">DANA</button>
+                      <button class="ewallet-btn" onclick="selectEwallet('ShopeePay', event)">ShopeePay</button>
+                    </div>
+                    <div id="ewalletSelected" style="margin-top: 0.75rem; font-size: 0.85rem; color: var(--sage); display: none">✓ <span id="ewalletName"></span> terpilih. Kamu akan diarahkan ke aplikasi saat checkout.</div>
+                  </div>
+                </div>
+
+                <!-- QRIS -->
+                <div class="payment-option" id="pay-qris" onclick="selectPayment('qris')">
+                  <div class="payment-option-header">
+                    <div class="payment-radio"></div>
+                    <div class="payment-icon">📷</div>
+                    <div>
+                      <div class="payment-name">QRIS</div>
+                      <div class="payment-desc">Scan QR dari semua e-wallet</div>
+                    </div>
+                  </div>
+                  <div class="payment-body" id="body-qris">
+                    <div class="qris-box">
+                      <div style="font-size: 0.8rem; color: var(--taupe); margin-bottom: 1rem">Scan kode QRIS berikut:</div>
+                      <div class="qris-code" id="qrisCode"></div>
+                      <div style="font-size: 0.75rem; color: var(--taupe); margin-top: 0.75rem">QRIS berlaku 15 menit</div>
+                      <div style="font-size: 1rem; font-weight: 700; margin-top: 0.5rem" id="qrisAmount"></div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Alfamart / Indomaret -->
+                <div class="payment-option" id="pay-minimarket" onclick="selectPayment('minimarket')">
+                  <div class="payment-option-header">
+                    <div class="payment-radio"></div>
+                    <div class="payment-icon">🏪</div>
+                    <div>
+                      <div class="payment-name">Alfamart / Indomaret</div>
+                      <div class="payment-desc">Bayar di minimarket terdekat</div>
+                    </div>
+                  </div>
+                  <div class="payment-body" id="body-minimarket">
+                    <div style="font-size: 0.8rem; color: var(--taupe); margin-bottom: 0.75rem">Pilih minimarket:</div>
+                    <div class="minimarket-options">
+                      <button class="minimarket-btn" onclick="selectMinimarket('Alfamart', event)">🔴 Alfamart</button>
+                      <button class="minimarket-btn" onclick="selectMinimarket('Indomaret', event)">🟡 Indomaret</button>
+                    </div>
+                    <div class="minimarket-code-box" id="minimarketCodeBox" style="display: none">
+                      <div class="minimarket-info">
+                        <div style="font-size: 0.85rem; font-weight: 600; margin-bottom: 0.5rem" id="minimarketName"></div>
+                        <div style="font-size: 0.75rem; color: var(--taupe); margin-bottom: 1rem">Tunjukkan kode ini ke kasir:</div>
+                        <div class="payment-code-display">
+                          <div class="payment-code-label">KODE PEMBAYARAN</div>
+                          <div class="payment-code-number" id="minimarketCode">---</div>
+                          <button class="copy-code-btn" onclick="copyCode()">📋 Salin Kode</button>
+                        </div>
+                        <div class="minimarket-amount">
+                          <span>Total yang harus dibayar:</span>
+                          <strong id="minimarketAmount"></strong>
+                        </div>
+                        <div class="minimarket-steps">
+                          <div class="ms-step">
+                            <span class="ms-num">1</span><span>Datang ke <strong id="minimarketNameStep"></strong> terdekat</span>
+                          </div>
+                          <div class="ms-step"><span class="ms-num">2</span><span>Tunjukkan kode ke kasir atau scan barcode</span></div>
+                          <div class="ms-step"><span class="ms-num">3</span><span>Bayar sesuai nominal yang tertera</span></div>
+                          <div class="ms-step"><span class="ms-num">4</span><span>Simpan struk sebagai bukti pembayaran</span></div>
+                        </div>
+                        <div style="font-size: 0.72rem; color: var(--rose); margin-top: 0.75rem">⏱ Kode berlaku 24 jam sejak diterbitkan</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Cicilan 0% -->
+                <div class="payment-option" id="pay-cicilan" onclick="selectPayment('cicilan')">
+                  <div class="payment-option-header">
+                    <div class="payment-radio"></div>
+                    <div class="payment-icon">💳</div>
+                    <div>
+                      <div class="payment-name">Cicilan 0%</div>
+                      <div class="payment-desc">Kredit tanpa bunga, 3–24 bulan</div>
+                    </div>
+                  </div>
+                  <div class="payment-body" id="body-cicilan">
+                    <div style="font-size: 0.8rem; color: var(--taupe); margin-bottom: 0.75rem">Pilih tenor cicilan:</div>
+                    <div class="cicilan-options" id="cicilanList"></div>
+                    <div style="font-size: 0.75rem; color: var(--taupe); margin-top: 0.75rem">*Berlaku untuk kartu kredit Visa/Mastercard/JCB</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Order Summary -->
+          <div>
+            <div class="order-summary" id="checkoutSummary">
+              <div class="summary-title">Ringkasan Pesanan</div>
+              <div id="summaryItems"></div>
+              <div class="summary-row"><span>Subtotal</span><span id="summarySubtotal"></span></div>
+              <div class="summary-row"><span>Ongkos Kirim</span><span id="summaryShipping"></span></div>
+              <div class="summary-row total"><span>Total</span><span id="summaryTotal"></span></div>
+              <button class="checkout-btn" onclick="processPayment()">Bayar Sekarang</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== SUCCESS PAGE ==================== -->
+    <div class="page" id="page-success">
+      <div class="success-page">
+        <div class="success-card">
+          <div class="success-icon">✅</div>
+          <div class="success-title">Pesanan Berhasil!</div>
+          <div class="success-msg">Pembayaran kamu telah dikonfirmasi. Pesanan sedang diproses dan akan segera dikirim.</div>
+          <div class="order-id" id="successOrderId">#ELJEL-000000</div>
+          <div class="tracking-steps">
+            <div class="tracking-step">
+              <div class="step-dot"></div>
+              <div class="step-text"><strong>Pembayaran Dikonfirmasi</strong><span class="step-time" id="successTime"></span></div>
+            </div>
+            <div class="tracking-step">
+              <div class="step-dot"></div>
+              <div class="step-text"><strong>Sedang Dikemas</strong><span class="step-time">Estimasi 1-2 jam</span></div>
+            </div>
+            <div class="tracking-step">
+              <div class="step-dot pending"></div>
+              <div class="step-text"><strong>Dalam Pengiriman</strong><span class="step-time">Estimasi besok</span></div>
+            </div>
+            <div class="tracking-step">
+              <div class="step-dot pending"></div>
+              <div class="step-text"><strong>Diterima</strong><span class="step-time">Estimasi 2-3 hari</span></div>
+            </div>
+          </div>
+          <button class="btn-primary" style="width: 100%" onclick="showPage('products')">Lanjut Belanja</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== AUTH PAGE ==================== -->
+    <div class="page" id="page-auth">
+      <div class="auth-page">
+        <div class="auth-card">
+          <div class="auth-logo-wrap">
+            <img
+              src="logo.png"
+              alt="ELJEL"
+              class="auth-logo-img"
+              onerror="
+                this.style.display = 'none';
+                document.getElementById('authLogoFallback').style.display = 'block';
+              "
+            />
+            <div class="auth-logo" id="authLogoFallback" style="display: none">EL<span>J</span>EL</div>
+          </div>
+          <div class="auth-subtitle">Fashion Store Indonesia</div>
+          <div class="auth-tabs">
+            <div class="auth-tab active" id="tab-login" onclick="switchAuthTab('login')">Masuk</div>
+            <div class="auth-tab" id="tab-register" onclick="switchAuthTab('register')">Daftar</div>
+          </div>
+          <div id="loginForm" class="auth-form">
+            <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="loginEmail" type="email" placeholder="email@gmail.com" /></div>
+            <div class="form-group"><label class="form-label">Password</label><input class="form-input" id="loginPass" type="password" placeholder="••••••••" /></div>
+            <button class="btn-auth" onclick="doLogin()">Masuk</button>
+            <div class="auth-divider">atau</div>
+            <button class="btn-auth" style="background: var(--charcoal)" onclick="doGuestLogin()">Lanjut sebagai Tamu</button>
+          </div>
+          <div id="registerForm" class="auth-form" style="display: none">
+            <div class="form-group"><label class="form-label">Nama Lengkap</label><input class="form-input" id="regName" placeholder="Nama kamu" /></div>
+            <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="regEmail" type="email" placeholder="email@gmail.com" /></div>
+            <div class="form-group"><label class="form-label">Password</label><input class="form-input" id="regPass" type="password" placeholder="Min. 8 karakter" /></div>
+            <div class="form-group"><label class="form-label">Konfirmasi Password</label><input class="form-input" id="regPassConfirm" type="password" placeholder="Ulangi password" /></div>
+            <button class="btn-auth" onclick="doRegister()">Daftar Sekarang</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== ADMIN PAGE ==================== -->
+    <div class="page" id="page-admin">
+      <div class="admin-page">
+        <div class="admin-inner">
+          <div class="admin-header">
+            <div class="admin-title">Dashboard Admin</div>
+            <button class="btn-add" onclick="openAddModal()">+ Tambah Produk</button>
+            <button class="btn-add" style="background: var(--taupe); margin-left: 0.5rem; font-size: 0.8rem" onclick="if (confirm('Reset semua produk ke default?')) resetProducts();">↺ Reset Data</button>
+          </div>
+          <div class="admin-stats">
+            <div class="stat-card">
+              <div class="stat-label">Total Produk</div>
+              <div class="stat-val" id="statProducts">0</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Total Pesanan</div>
+              <div class="stat-val" id="statOrders">0</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Pendapatan</div>
+              <div class="stat-val" id="statRevenue">Rp 0</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Stok Rendah</div>
+              <div class="stat-val" id="statLowStock" style="color: var(--rose)">0</div>
+            </div>
+          </div>
+          <div class="admin-table">
+            <div class="admin-table-header"><div class="table-title">Daftar Produk</div></div>
+            <div style="overflow-x: auto">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Foto</th>
+                    <th>Produk</th>
+                    <th>Kategori</th>
+                    <th>Harga</th>
+                    <th>Stok</th>
+                    <th>Status</th>
+                    <th>Aksi</th>
+                  </tr>
+                </thead>
+                <tbody id="adminTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
